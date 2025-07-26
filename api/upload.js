@@ -3,7 +3,7 @@ const path = require('path');
 const formidable = require('formidable-serverless');
 
 // 管理员密码(部署前请修改)
-const ADMIN_PASSWORD = 'your_secure_password_here';
+const ADMIN_PASSWORD = '214214';
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
