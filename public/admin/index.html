@@ -59,33 +59,52 @@
     </div>
     
     <script>
-        document.getElementById('upload-btn').addEventListener('click', async () => {
-    const statusDiv = document.getElementById('upload-status');
-    statusDiv.textContent = '上传中...';
-    statusDiv.className = 'status';
-
-    try {
-        const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: new FormData(document.querySelector('form')) // 使用表单数据
+        document.getElementById('upload-btn').addEventListener('click', async (e) => {
+            e.preventDefault(); // 防止表单默认提交
+    
+            const password = document.getElementById('admin-password').value;
+            const fileInput = document.getElementById('pdf-upload');
+            const statusDiv = document.getElementById('upload-status');
+    
+            if (!password) {
+                statusDiv.textContent = '请输入管理员密码';
+                statusDiv.className = 'status error';
+                return;
+            }
+    
+            if (!fileInput.files[0]) {
+                statusDiv.textContent = '请选择PDF文件';
+                statusDiv.className = 'status error';
+                return;
+            }
+    
+            // 正确构建FormData
+            const formData = new FormData();
+            formData.append('password', password);
+            formData.append('pdf', fileInput.files[0]);
+    
+            try {
+                statusDiv.textContent = '上传中...';
+                statusDiv.className = 'status';
+        
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+        
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+        
+                const result = await response.json();
+                statusDiv.textContent = '上传成功!';
+                statusDiv.className = 'status success';
+            } catch (error) {
+                statusDiv.textContent = `上传失败: ${error.message}`;
+                statusDiv.className = 'status error';
+            }
         });
-
-        // 首先检查响应状态
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`服务器返回 ${response.status}: ${errorText}`);
-        }
-
-        // 然后尝试解析JSON
-        const result = await response.json();
-        statusDiv.textContent = '上传成功!';
-        statusDiv.className = 'status success';
-    } catch (error) {
-        console.error('上传错误:', error);
-        statusDiv.textContent = `上传失败: ${error.message}`;
-        statusDiv.className = 'status error';
-    }
-});
     </script>
 </body>
 </html>
