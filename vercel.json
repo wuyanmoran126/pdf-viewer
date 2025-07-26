@@ -1,5 +1,12 @@
 {
   "version": 2,
+  "functions": {
+    "api/upload.js": {
+      "maxDuration": 30,
+      "memory": 3008,
+      "maxRequestBodySize": "15mb"
+    }
+  },
   "builds": [
     {
       "src": "api/upload.js",
