@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF管理后台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .upload-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="password"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h2>PDF管理后台</h2>
+        <input type="password" id="admin-password" placeholder="管理员密码">
+        <input type="file" id="pdf-upload" accept=".pdf">
+        <button id="upload-btn">上传PDF</button>
+        <div id="upload-status"></div>
+    </div>
+    
+    <script>
+        document.getElementById('upload-btn').addEventListener('click', async () => {
+            const password = document.getElementById('admin-password').value;
+            const fileInput = document.getElementById('pdf-upload');
+            const statusDiv = document.getElementById('upload-status');
+            
+            if (!password) {
+                statusDiv.textContent = '请输入管理员密码';
+                statusDiv.className = 'status error';
+                return;
+            }
+            
+            if (!fileInput.files[0]) {
+                statusDiv.textContent = '请选择PDF文件';
+                statusDiv.className = 'status error';
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('password', password);
+            formData.append('pdf', fileInput.files[0]);
+            
+            try {
+                statusDiv.textContent = '上传中...';
+                statusDiv.className = 'status';
+                
+                const response = await fetch('/admin/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.textContent = '上传成功!';
+                    statusDiv.className = 'status success';
+                } else {
+                    statusDiv.textContent = '上传失败: ' + (result.message || '未知错误');
+                    statusDiv.className = 'status error';
+                }
+            } catch (error) {
+                statusDiv.textContent = '上传失败: ' + error.message;
+                statusDiv.className = 'status error';
+            }
+        });
+    </script>
+</body>
+</html>
