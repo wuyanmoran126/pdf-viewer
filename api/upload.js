@@ -10,6 +10,8 @@ module.exports = async (req, res) => {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
+    res.setHeader('Content-Type', 'application/json');
+
     try {
         const form = new formidable.IncomingForm();
         
@@ -49,6 +51,6 @@ module.exports = async (req, res) => {
         });
     } catch (error) {
         console.error('上传错误:', error);
-        res.status(500).json({ message: '服务器错误' });
+        res.status(500).json({ message: '服务器错误', error: error.message });
     }
 };
