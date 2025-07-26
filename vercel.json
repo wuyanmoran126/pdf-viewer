@@ -13,8 +13,7 @@
   "routes": [
     {
       "src": "/admin/upload",
-      "dest": "/api/upload.js",
-      "methods": ["POST"]
+      "dest": "/api/upload"
     },
     {
       "src": "/admin",

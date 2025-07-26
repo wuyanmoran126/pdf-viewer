@@ -3,14 +3,12 @@ const path = require('path');
 const formidable = require('formidable-serverless');
 
 // 管理员密码(部署前请修改)
-const ADMIN_PASSWORD = '214214';
+const ADMIN_PASSWORD = 'your_secure_password_here';
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
-
-    res.setHeader('Content-Type', 'application/json');
 
     try {
         const form = new formidable.IncomingForm();
@@ -51,6 +49,6 @@ module.exports = async (req, res) => {
         });
     } catch (error) {
         console.error('上传错误:', error);
-        res.status(500).json({ message: '服务器错误', error: error.message });
+        res.status(500).json({ message: '服务器错误' });
     }
 };
